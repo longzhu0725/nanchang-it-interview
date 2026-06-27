@@ -6,9 +6,9 @@ import type { Post } from '@/types/database'
 
 export function PostCard({ post }: { post: Post & { companies?: { name: string } | null; jobs?: { title: string } | null } }) {
   return (
-    <Link href={`/posts/${post.id}`} className="block h-full">
-      <Card className="h-full cursor-pointer">
-        <CardContent className="py-4">
+    <Link href={`/posts/${post.id}`} className="block h-full group">
+      <Card className="h-full transition-shadow hover:shadow-md">
+        <CardContent className="p-5">
           <div className="mb-2.5 flex items-center gap-2">
             <Badge
               variant={post.type === '面经' ? 'default' : 'secondary'}
@@ -23,7 +23,7 @@ export function PostCard({ post }: { post: Post & { companies?: { name: string }
               </span>
             )}
           </div>
-          <h3 className="line-clamp-2 text-[15px] font-medium leading-snug tracking-tight text-foreground">
+          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-tight text-foreground group-hover:text-primary/80 transition-colors">
             {post.title}
           </h3>
           <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">

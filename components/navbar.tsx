@@ -8,11 +8,11 @@ export async function Navbar() {
   const { data: { user } } = await supabase.auth.getUser()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Building2 className="h-3.5 w-3.5" />
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Building2 className="h-4 w-4" />
           </span>
           <span className="hidden sm:inline">本地 IT 面经圈</span>
           <span className="sm:hidden">面经圈</span>
@@ -21,30 +21,34 @@ export async function Navbar() {
         <nav className="flex items-center gap-1">
           <Link
             href="/companies"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="hidden md:inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            <Building2 className="h-3.5 w-3.5" />企业
+            <Building2 className="h-4 w-4" />
+            <span>企业</span>
           </Link>
           <Link
             href="/posts"
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            <FileText className="h-3.5 w-3.5" /><span className="hidden sm:inline">面经</span>
+            <FileText className="h-4 w-4" />
+            <span className="hidden sm:inline">面经</span>
           </Link>
           <Link
             href="/questions"
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            <MessageCircle className="h-3.5 w-3.5" /><span className="hidden sm:inline">问答</span>
+            <MessageCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">问答</span>
           </Link>
 
-          <div className="mx-2 hidden h-4 w-px bg-border sm:block" />
+          <div className="mx-2 hidden h-5 w-px bg-border sm:block" />
 
           {user ? (
             <>
               <Link href="/posts/new">
-                <Button size="sm" className="gap-1.5 px-3">
-                  <PenSquare className="h-3.5 w-3.5" />发布
+                <Button size="sm" className="gap-2">
+                  <PenSquare className="h-4 w-4" />
+                  <span>发布</span>
                 </Button>
               </Link>
               <Link href="/profile" className="ml-1">
@@ -60,7 +64,7 @@ export async function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground px-2 py-1.5">
+              <Link href="/login" className="px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                 登录
               </Link>
               <Link href="/register" className="ml-1">

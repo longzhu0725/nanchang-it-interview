@@ -6,8 +6,9 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
+import { Building2 } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -41,37 +42,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>登录本地 IT 面经圈</CardTitle>
-          <CardDescription>南昌 IT 求职者互助平台</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {registered && (
-            <div className="mb-4 rounded bg-green-50 p-3 text-sm text-green-700">
-              注册成功！请登录。
-            </div>
-          )}
-          <form onSubmit={onSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">邮箱</Label>
-              <Input id="email" name="email" type="email" required />
-            </div>
-            <div>
-              <Label htmlFor="password">密码</Label>
-              <Input id="password" name="password" type="password" required />
-            </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? '登录中...' : '登录'}
-            </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              没有账号？<Link href="/register" className="text-primary hover:underline">注册</Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Building2 className="h-6 w-6" />
+          </div>
+          <h1 className="text-xl font-semibold tracking-tight">欢迎回来</h1>
+          <p className="mt-1 text-sm text-muted-foreground">登录你的账户继续使用</p>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            {registered && (
+              <div className="mb-4 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                注册成功！请登录。
+              </div>
+            )}
+            <form onSubmit={onSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">邮箱</Label>
+                <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">密码</Label>
+                <Input id="password" name="password" type="password" required />
+              </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? '登录中...' : '登录'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          还没有账号？
+          <Link href="/register" className="ml-1 font-medium text-foreground hover:underline">
+            立即注册
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

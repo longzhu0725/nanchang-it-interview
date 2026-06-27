@@ -5,18 +5,18 @@ import type { Company } from '@/types/database'
 
 export function CompanyCard({ company }: { company: Company }) {
   return (
-    <Link href={`/companies/${company.id}`} className="block h-full">
-      <Card className="h-full cursor-pointer">
-        <CardContent className="py-4">
+    <Link href={`/companies/${company.id}`} className="block h-full group">
+      <Card className="h-full transition-shadow hover:shadow-md">
+        <CardContent className="p-5">
           <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent text-foreground/70">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-foreground/70">
               <Building2 className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="truncate text-[15px] font-medium tracking-tight text-foreground">
+              <h3 className="truncate text-base font-semibold tracking-tight text-foreground group-hover:text-primary/80 transition-colors">
                 {company.name}
               </h3>
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-xs text-muted-foreground mt-0.5">
                 {company.industry}{company.size ? ` · ${company.size}` : ''}
               </p>
             </div>
@@ -31,7 +31,7 @@ export function CompanyCard({ company }: { company: Company }) {
               {company.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded-md bg-accent px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground"
+                  className="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
                 >
                   {tag}
                 </span>
