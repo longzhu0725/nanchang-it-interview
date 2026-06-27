@@ -20,9 +20,12 @@ export function SearchBox() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
+    <form
+      onSubmit={onSubmit}
+      className="flex items-center gap-2 rounded-lg border border-border bg-background p-1.5 shadow-sm transition-colors focus-within:border-foreground/20 focus-within:ring-4 focus-within:ring-foreground/5"
+    >
       <Select value={scope} onValueChange={(val) => setScope(val || 'posts')}>
-        <SelectTrigger className="w-full sm:w-28">
+        <SelectTrigger className="h-9 w-[88px] shrink-0 border-0 bg-transparent px-2.5 text-sm shadow-none focus:ring-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -31,15 +34,16 @@ export function SearchBox() {
           <SelectItem value="questions">问答</SelectItem>
         </SelectContent>
       </Select>
-      <div className="flex flex-1 gap-2">
-        <Input
-          placeholder="搜索面经、企业、问答..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1"
-        />
-        <Button type="submit"><Search className="h-4 w-4" /></Button>
-      </div>
+      <div className="h-5 w-px shrink-0 bg-border" />
+      <Input
+        placeholder="搜索面经、企业、问答..."
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        className="h-9 flex-1 border-0 bg-transparent px-2 shadow-none focus-visible:ring-0"
+      />
+      <Button type="submit" size="sm" className="h-9 shrink-0 px-3">
+        <Search className="h-4 w-4" />
+      </Button>
     </form>
   )
 }

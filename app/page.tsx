@@ -3,9 +3,8 @@ import { SearchBox } from '@/components/search-box'
 import { PostCard } from '@/components/post-card'
 import { QuestionCard } from '@/components/question-card'
 import { CompanyCard } from '@/components/company-card'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Building2, FileText, MessageCircle, Users } from 'lucide-react'
+import { Building2, FileText, MessageCircle, ArrowRight } from 'lucide-react'
 
 export default async function HomePage() {
   const supabase = createClient()
@@ -31,72 +30,94 @@ export default async function HomePage() {
     .limit(6)
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <section className="mb-12 text-center py-8">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-3">南昌 IT 面经圈</h1>
-        <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-          提前了解本地企业笔试面试，分享真实经验，互助前行
+    <div className="mx-auto max-w-6xl px-5">
+      {/* Hero */}
+      <section className="py-16 text-center sm:py-24">
+        <div className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-accent/50 px-3 py-1 text-xs text-muted-foreground">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          南昌 IT 求职者互助公益平台
+        </div>
+        <h1 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          提前了解本地企业<span className="text-muted-foreground">笔试面试</span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+          分享真实经验，互助前行，让求职路上不再信息不对称
         </p>
-        <div className="max-w-2xl mx-auto">
+        <div className="mx-auto mt-8 max-w-xl">
           <SearchBox />
         </div>
       </section>
 
-      <section className="mb-12 grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="text-center p-4 rounded-lg bg-muted/50">
-          <Building2 className="h-8 w-8 mx-auto mb-2 text-primary" />
-          <p className="font-medium">{companies?.length || 0}+</p>
-          <p className="text-sm text-muted-foreground">本地企业</p>
-        </div>
-        <div className="text-center p-4 rounded-lg bg-muted/50">
-          <FileText className="h-8 w-8 mx-auto mb-2 text-primary" />
-          <p className="font-medium">{posts?.length || 0}+</p>
-          <p className="text-sm text-muted-foreground">面经笔经</p>
-        </div>
-        <div className="text-center p-4 rounded-lg bg-muted/50">
-          <MessageCircle className="h-8 w-8 mx-auto mb-2 text-primary" />
-          <p className="font-medium">{questions?.length || 0}+</p>
-          <p className="text-sm text-muted-foreground">问答</p>
-        </div>
-        <div className="text-center p-4 rounded-lg bg-muted/50">
-          <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-          <p className="font-medium">公益</p>
-          <p className="text-sm text-muted-foreground">互助平台</p>
+      {/* Stats - minimal inline */}
+      <section className="mb-16">
+        <div className="flex items-center justify-center gap-8 border-y border-border/60 py-6 text-center sm:gap-16">
+          <div>
+            <p className="text-lg font-semibold tracking-tight">{companies?.length || 0}+</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">本地企业</p>
+          </div>
+          <div className="h-8 w-px bg-border/60" />
+          <div>
+            <p className="text-lg font-semibold tracking-tight">{posts?.length || 0}+</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">面经笔经</p>
+          </div>
+          <div className="h-8 w-px bg-border/60" />
+          <div>
+            <p className="text-lg font-semibold tracking-tight">{questions?.length || 0}+</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">真实问答</p>
+          </div>
         </div>
       </section>
 
-      <section className="mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">热门企业</h2>
-          <Link href="/companies">
-            <Button variant="ghost" size="sm">查看全部</Button>
+      {/* Companies */}
+      <section className="mb-16">
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <Building2 className="h-3.5 w-3.5" />企业
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight">热门企业</h2>
+          </div>
+          <Link href="/companies" className="group inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            查看全部 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {companies?.map((company) => <CompanyCard key={company.id} company={company} />)}
         </div>
       </section>
 
-      <section className="mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">最新面经</h2>
-          <Link href="/posts">
-            <Button variant="ghost" size="sm">查看更多</Button>
+      {/* Posts */}
+      <section className="mb-16">
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <FileText className="h-3.5 w-3.5" />面经
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight">最新面经</h2>
+          </div>
+          <Link href="/posts" className="group inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            查看更多 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {posts?.map((post) => <PostCard key={post.id} post={post} />)}
         </div>
       </section>
 
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">最新问答</h2>
-          <Link href="/questions">
-            <Button variant="ghost" size="sm">查看更多</Button>
+      {/* Questions */}
+      <section className="mb-8">
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <div className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <MessageCircle className="h-3.5 w-3.5" />问答
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight">最新问答</h2>
+          </div>
+          <Link href="/questions" className="group inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            查看更多 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
         </div>
       </section>

@@ -6,29 +6,38 @@ import type { Post } from '@/types/database'
 
 export function PostCard({ post }: { post: Post & { companies?: { name: string } | null; jobs?: { title: string } | null } }) {
   return (
-    <Link href={`/posts/${post.id}`}>
-      <Card className="h-full hover:bg-muted/50 transition-colors cursor-pointer">
+    <Link href={`/posts/${post.id}`} className="block h-full">
+      <Card className="h-full cursor-pointer">
         <CardContent className="py-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge variant={post.type === '面经' ? 'default' : 'secondary'}>{post.type}</Badge>
+          <div className="mb-2.5 flex items-center gap-2">
+            <Badge
+              variant={post.type === '面经' ? 'default' : 'secondary'}
+              className="font-normal"
+            >
+              {post.type}
+            </Badge>
             {post.difficulty && (
-              <div className="flex items-center gap-1 text-xs text-yellow-600">
-                <Star className="h-3 w-3 fill-yellow-500" />
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                 {post.difficulty}/5
-              </div>
+              </span>
             )}
           </div>
-          <h3 className="font-medium line-clamp-2 mb-2">{post.title}</h3>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{post.content}</p>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <h3 className="line-clamp-2 text-[15px] font-medium leading-snug tracking-tight text-foreground">
+            {post.title}
+          </h3>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+            {post.content}
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
             {post.companies?.name && (
-              <Badge variant="outline" className="text-xs">{post.companies.name}</Badge>
+              <span className="text-foreground/70">{post.companies.name}</span>
             )}
-            <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {post.views}</span>
-            <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /> {post.likes}</span>
-            {post.is_anonymous ? (
-              <span className="text-muted-foreground">匿名用户</span>
-            ) : null}
+            <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />{post.views}</span>
+            <span className="inline-flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{post.likes}</span>
+            {post.is_anonymous && (
+              <span className="text-muted-foreground/80">匿名</span>
+            )}
           </div>
         </CardContent>
       </Card>
