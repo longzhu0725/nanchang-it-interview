@@ -15,7 +15,6 @@ export default async function CompaniesPage({
     .from('companies')
     .select('*')
     .eq('status', 'published')
-    .eq('city', '南昌')
 
   if (searchParams.q) {
     query = query.ilike('name', `%${searchParams.q}%`)
@@ -26,7 +25,22 @@ export default async function CompaniesPage({
 
   const { data: companies } = await query.order('name')
 
-  const industries = ['互联网', '软件开发', '系统集成', 'IT服务', '企业软件', '运营商IT']
+  // 从数据库动态获取所有行业分类
+  const { data: industryData } = await supabase
+    .from('companies')
+    .select('industry')
+    .eq('status', 'published')
+    .not('industry', 'is', null)
+
+  // 提取并去重行业
+  const industries = Array.from(
+    new Set(
+      (industryData || [])
+        .map(c => c.industry)
+        .filter(Boolean)
+        .sort()
+    )
+  )
 
   return (
     <div className="container mx-auto px-4 py-8">

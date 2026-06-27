@@ -12,7 +12,10 @@ export default async function QuestionsPage({
   const supabase = createClient()
   let query = supabase
     .from('questions')
-    .select('*')
+    .select(`
+      *,
+      answers:answers(count)
+    `)
     .in('status', ['published', 'resolved'])
 
   if (searchParams.q) {
@@ -20,6 +23,12 @@ export default async function QuestionsPage({
   }
 
   const { data: questions } = await query.order('created_at', { ascending: false })
+
+  // 处理answer_count
+  const questionsWithAnswerCount = questions?.map(q => ({
+    ...q,
+    answer_count: q.answers?.[0]?.count || 0
+  })) || []
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -38,9 +47,9 @@ export default async function QuestionsPage({
         />
       </form>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
+        {questionsWithAnswerCount?.map((question) => <QuestionCard key={question.id} question={question} />)}
       </div>
-      {!questions?.length && (
+      {!questionsWithAnswerCount?.length && (
         <div className="text-center py-12 text-muted-foreground">
           暂无问题，<Link href="/questions/new" className="text-primary hover:underline">提出第一个问题</Link>
         </div>
