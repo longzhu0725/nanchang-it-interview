@@ -2,6 +2,8 @@
 
 一个专注于南昌 IT 行业的面试/笔试经验分享公益平台，帮助求职者提前了解本地企业面试流程，节约准备时间。
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
 ## 技术栈
 
 - **前端框架**: Next.js 14 (App Router) + React 18 + TypeScript
@@ -23,124 +25,82 @@
 - 通知系统（点赞/评论/回答自动通知）
 - 搜索功能（支持面经/企业/问答搜索与筛选）
 
-## 快速开始
+---
 
-### 前置准备
+## GitHub 用户 4 步极速部署
 
-1. 注册 [Supabase](https://supabase.com/) 账号
-2. 安装 [Node.js](https://nodejs.org/) 18+ 和 npm
+> 有 GitHub 账号？按这 4 步走，最快 15 分钟上线。
 
-### 第一步：创建 Supabase 项目
+### 第 1 步：创建 Supabase 项目（5 分钟）
 
-1. 登录 Supabase，点击 "New Project" 创建新项目
-2. 记下项目的 **Project URL**、**anon public** 密钥和 **service_role** 密钥（在 Settings > API 中）
-3. 等待项目初始化完成（约 2 分钟）
+1. 打开 [supabase.com](https://supabase.com/)，点击 "Start your project"，用 **GitHub 账号登录**（不用单独注册）
+2. 点击 "New Project"，填写项目名、数据库密码（自动生成即可），区域选 **Singapore**
+3. 等 1-2 分钟初始化完成
+4. 进入 **Settings > API**，复制以下三个值到记事本：
+   - `Project URL`（类似 `https://xxxx.supabase.co`）
+   - `anon public` key（一长串 `eyJ...`）
+   - `service_role` secret（另一长串，保密）
 
-### 第二步：初始化数据库
+### 第 2 步：初始化数据库（3 分钟）
 
-1. 在 Supabase Dashboard 中，进入 **SQL Editor**
-2. 复制 `supabase/migrations/0001_initial.sql` 的全部内容，粘贴到 SQL Editor 中执行
-3. 再复制 `supabase/migrations/0002_notifications_and_views.sql` 的全部内容，粘贴执行
-4. 这会创建所有表、索引、RLS 安全策略、触发器和初始南昌 IT 企业数据
+1. Supabase 左侧菜单点击 **SQL Editor** → **New query**
+2. 打开本地项目里的 `supabase/migrations/0001_initial.sql`，复制全部内容粘贴进去，点 **Run**
+3. 再打开 `supabase/migrations/0002_notifications_and_views.sql`，同样复制粘贴执行
+4. 看到 "Success" 就成功了
 
-### 第三步：配置认证
+### 第 3 步：推送到 GitHub 并部署到 Vercel（5 分钟）
 
-1. 进入 Supabase Dashboard > **Authentication > Providers**
-2. 确认 **Email** 认证已启用
-3. （可选）在 **Authentication > URL Configuration** 中设置 Site URL 为你的部署域名（本地开发为 `http://localhost:3000`）
-4. 如果需要邮箱验证，保持 "Confirm email" 开启；如需关闭（开发阶段方便测试），可关闭
+1. 在 GitHub 上创建一个**空仓库**（不要勾选 README/.gitignore），名字随便起，比如 `nanchang-it-interview`
+2. 在本地项目文件夹里执行（把下面的地址换成你自己的仓库地址）：
 
-### 第四步：设置 Storage（可选，用于头像上传）
-
-1. 进入 Supabase Dashboard > **Storage**
-2. 创建一个名为 `avatars` 的 public bucket
-3. 创建一个名为 `images` 的 public bucket
-4. 为 avatars bucket 添加 RLS 策略（在 SQL Editor 中执行）：
-```sql
--- Avatars bucket policies
-INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true) ON CONFLICT DO NOTHING;
-INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true) ON CONFLICT DO NOTHING;
-
-CREATE POLICY "Avatar images are publicly accessible" ON storage.objects
-  FOR SELECT USING (bucket_id = 'avatars');
-CREATE POLICY "Users can upload own avatar" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
-CREATE POLICY "Users can update own avatar" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
-
-CREATE POLICY "Post images are publicly accessible" ON storage.objects
-  FOR SELECT USING (bucket_id = 'images');
-CREATE POLICY "Authenticated users can upload images" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'images' AND auth.uid() IS NOT NULL);
+```bash
+git remote add origin https://github.com/你的用户名/nanchang-it-interview.git
+git push -u origin main
 ```
 
-### 第五步：设置第一个管理员用户
+3. 打开 [vercel.com/new](https://vercel.com/new)，用 **GitHub 账号登录**
+4. 选择刚才推送的仓库，点击 **Import**
+5. 在 "Environment Variables" 里添加三个变量（就是第 1 步复制的那三个）：
+   - `NEXT_PUBLIC_SUPABASE_URL` = Project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` = service_role key
+6. 点击 **Deploy**，等 1-2 分钟
 
-方法一：通过邀请码注册后手动设置：
-1. 先用邀请码注册一个用户
-2. 在 SQL Editor 中执行：
+### 第 4 步：配置登录回调 + 设管理员（2 分钟）
+
+1. Vercel 部署成功后，会给你一个域名（类似 `https://xxx.vercel.app`），复制它
+2. 回到 Supabase → **Authentication > URL Configuration**：
+   - Site URL 填你的 Vercel 域名
+   - Redirect URLs 添加：`https://xxx.vercel.app/auth/callback` 和 `http://localhost:3000/auth/callback`
+   - 点 **Save**
+3. 设管理员：Supabase → **Authentication > Users** → **Add user**，填你的邮箱和密码创建用户
+4. 回到 **SQL Editor**，执行（换成你的邮箱）：
+
 ```sql
 UPDATE profiles SET role = 'admin' WHERE email = '你的邮箱@example.com';
 ```
 
-方法二：直接在 Supabase Auth 中创建用户并设为管理员：
-1. 在 Authentication > Users 中点击 "Add user"，创建用户
-2. 在 SQL Editor 中执行上述 UPDATE 语句设置 admin 角色
+5. 打开你的网站，用管理员账号登录，进入 `/admin/invite-codes` 生成邀请码，分享给朋友注册
 
-### 第六步：配置本地环境变量
+完成！🎉
 
-1. 复制环境变量模板：
+---
+
+## 本地开发
+
 ```bash
+# 1. 复制环境变量文件
 cp .env.local.example .env.local
-```
-2. 编辑 `.env.local`，填入你的 Supabase 项目信息：
-```
-NEXT_PUBLIC_SUPABASE_URL=https://你的项目ID.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=你的anon_key
-SUPABASE_SERVICE_ROLE_KEY=你的service_role_key
-```
+# 编辑 .env.local，填入你的 Supabase 三个密钥
 
-### 第七步：安装依赖并运行
-
-```bash
+# 2. 安装依赖
 npm install
+
+# 3. 启动开发服务器
 npm run dev
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 即可看到平台。
-
-## 部署到 Vercel（推荐）
-
-### 准备工作
-
-1. 将代码推送到 GitHub/GitLab/Bitbucket 仓库
-2. 注册 [Vercel](https://vercel.com/) 账号
-
-### 部署步骤
-
-1. 在 Vercel 中点击 "Add New Project"，导入你的代码仓库
-2. 在 **Configure Project** 页面，展开 "Environment Variables"
-3. 添加以下环境变量：
-   - `NEXT_PUBLIC_SUPABASE_URL` = 你的 Supabase Project URL
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = 你的 Supabase anon key
-   - `SUPABASE_SERVICE_ROLE_KEY` = 你的 Supabase service role key
-4. 点击 "Deploy"，等待部署完成（约 1-2 分钟）
-5. 部署完成后，Vercel 会给你一个域名（如 `xxx.vercel.app`）
-
-### 配置 Supabase 回调地址
-
-1. 回到 Supabase Dashboard > Authentication > URL Configuration
-2. 将 **Site URL** 设置为你的 Vercel 域名（如 `https://xxx.vercel.app`）
-3. 在 **Redirect URLs** 中添加：
-   - `https://xxx.vercel.app/auth/callback`
-   - `http://localhost:3000/auth/callback`（本地开发用）
-4. 保存设置
-
-### 生成初始邀请码
-
-1. 先用管理员账号登录平台
-2. 进入「管理后台 > 邀请码」
-3. 生成邀请码，分享给需要注册的用户
+打开 [http://localhost:3000](http://localhost:3000) 即可访问。
 
 ## 项目结构
 
