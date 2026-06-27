@@ -69,8 +69,8 @@ export default function RegisterPage() {
                 <Input id="nickname" name="nickname" required placeholder="你的显示名称" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company">所在公司</Label>
-                <Input id="company" name="company" required placeholder="如：腾讯、华为、本地某公司" />
+                <Label htmlFor="company">所在公司 <span className="text-muted-foreground font-normal text-xs">(选填)</span></Label>
+                <Input id="company" name="company" placeholder="如：腾讯、华为、学生、待业、自由职业" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="inviteCode">邀请码</Label>
