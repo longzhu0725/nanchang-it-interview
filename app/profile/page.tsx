@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
 import {
-  User as UserIcon,
   FileText,
   MessageCircle,
   Bookmark,
@@ -79,162 +78,155 @@ export default async function ProfilePage() {
   const initial = displayName.charAt(0).toUpperCase()
 
   return (
-    <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
-      <div className="flex flex-col md:flex-row gap-6 md:items-start">
-        {/* 左侧：标题 + 内容标签 */}
-        <div className="min-w-0 flex-1 order-2 md:order-1">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6 md:mb-8">
-            <div>
-              <h1 className="text-2xl font-bold">用户中心</h1>
-              <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
-            </div>
-            <form action="/auth/logout" method="post">
-              <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1.5">
-                <LogOut className="h-4 w-4" />
-                退出登录
-              </Button>
-            </form>
-          </div>
-
-          <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 h-11">
-              <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
-                <FileText className="h-4 w-4" />我的发布
-              </TabsTrigger>
-              <TabsTrigger value="questions" className="flex items-center gap-1.5 text-sm">
-                <MessageCircle className="h-4 w-4" />我的提问
-              </TabsTrigger>
-              <TabsTrigger value="bookmarks" className="flex items-center gap-1.5 text-sm">
-                <Bookmark className="h-4 w-4" />我的收藏
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="posts" className="pt-4 md:pt-5">
-              <div className="flex flex-col gap-4">
-                {posts?.map((post) => <PostCard key={post.id} post={post} showAnonymous={false} />)}
-                {!posts?.length && (
-                  <div className="text-center py-12 border rounded-lg bg-muted/30">
-                    <p className="text-muted-foreground">暂无发布</p>
-                    <Link href="/posts/new" className="text-sm text-primary hover:underline mt-1 inline-block">
-                      去发布第一篇面经
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="questions" className="pt-4 md:pt-5">
-              <div className="flex flex-col gap-4">
-                {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
-                {!questions?.length && (
-                  <div className="text-center py-12 border rounded-lg bg-muted/30">
-                    <p className="text-muted-foreground">暂无提问</p>
-                    <Link href="/questions/new" className="text-sm text-primary hover:underline mt-1 inline-block">
-                      去提第一个问题
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="bookmarks" className="pt-4 md:pt-5">
-              <div className="flex flex-col gap-4">
-                {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
-                  bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
-                )}
-                {!bookmarks?.length && (
-                  <div className="text-center py-12 border rounded-lg bg-muted/30">
-                    <p className="text-muted-foreground">暂无收藏</p>
-                    <Link href="/posts" className="text-sm text-primary hover:underline mt-1 inline-block">
-                      去浏览面经
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-5xl">
+      {/* 页面标题 */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">用户中心</h1>
+          <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
         </div>
+        <form action="/auth/logout" method="post">
+          <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1.5">
+            <LogOut className="h-4 w-4" />
+            退出登录
+          </Button>
+        </form>
+      </div>
 
-        {/* 右侧：资料卡 */}
-        <div className="order-1 md:order-2 w-full md:w-[300px] lg:w-[340px] shrink-0 space-y-5">
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <UserIcon className="h-5 w-5 text-primary" />
-                个人资料
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-semibold text-xl md:text-2xl shadow-sm">
+      <div className="space-y-6 md:space-y-8">
+        {/* 个人资料卡 */}
+        <Card>
+          <CardContent className="p-5 md:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4 md:gap-6">
+              <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
+                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-semibold text-2xl md:text-3xl shadow-sm shrink-0">
                   {initial}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold truncate text-base md:text-lg">{displayName}</p>
+                  <p className="font-semibold text-lg md:text-xl truncate">{displayName}</p>
                   <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Building2 className="h-3.5 w-3.5" />
+                      {profile?.company || '未填写公司'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {profile?.city || '南昌'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      注册于 {new Date(profile?.created_at || Date.now()).toLocaleDateString('zh-CN')}
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
 
-              <div className="border-t" />
-
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-2.5 text-muted-foreground">
-                  <Building2 className="h-4 w-4 shrink-0" />
-                  <span>{profile?.company || '未填写公司'}</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-muted-foreground">
-                  <MapPin className="h-4 w-4 shrink-0" />
-                  <span>{profile?.city || '南昌'}</span>
-                </div>
-                <div className="flex items-center gap-2.5 text-muted-foreground">
-                  <CalendarDays className="h-4 w-4 shrink-0" />
-                  <span>注册于 {new Date(profile?.created_at || Date.now()).toLocaleDateString('zh-CN')}</span>
-                </div>
+        {/* 编辑资料 */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Pencil className="h-5 w-5 text-primary" />
+              编辑资料
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form action={updateProfile} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="nickname" className="text-sm">昵称</Label>
+                <Input
+                  id="nickname"
+                  name="nickname"
+                  defaultValue={profile?.nickname || ''}
+                  placeholder="请输入昵称"
+                  maxLength={50}
+                />
               </div>
-            </CardContent>
-          </Card>
+              <div className="space-y-2">
+                <Label htmlFor="company" className="text-sm">公司</Label>
+                <Input
+                  id="company"
+                  name="company"
+                  defaultValue={profile?.company || ''}
+                  placeholder="请输入公司名称"
+                  maxLength={100}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city" className="text-sm">城市</Label>
+                <Input
+                  id="city"
+                  name="city"
+                  defaultValue={profile?.city || ''}
+                  placeholder="请输入所在城市"
+                  maxLength={50}
+                />
+              </div>
+              <div className="sm:col-span-2 lg:col-span-3">
+                <Button type="submit" size="sm">保存修改</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Pencil className="h-5 w-5 text-primary" />
-                编辑资料
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form action={updateProfile} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nickname" className="text-sm">昵称</Label>
-                  <Input
-                    id="nickname"
-                    name="nickname"
-                    defaultValue={profile?.nickname || ''}
-                    placeholder="请输入昵称"
-                    maxLength={50}
-                  />
+        {/* 标签页 + 内容 */}
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 h-11 max-w-md">
+            <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
+              <FileText className="h-4 w-4" />我的发布
+            </TabsTrigger>
+            <TabsTrigger value="questions" className="flex items-center gap-1.5 text-sm">
+              <MessageCircle className="h-4 w-4" />我的提问
+            </TabsTrigger>
+            <TabsTrigger value="bookmarks" className="flex items-center gap-1.5 text-sm">
+              <Bookmark className="h-4 w-4" />我的收藏
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="posts" className="pt-4 md:pt-5">
+            <div className="flex flex-col gap-4">
+              {posts?.map((post) => <PostCard key={post.id} post={post} showAnonymous={false} />)}
+              {!posts?.length && (
+                <div className="text-center py-12 border rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">暂无发布</p>
+                  <Link href="/posts/new" className="text-sm text-primary hover:underline mt-1 inline-block">
+                    去发布第一篇面经
+                  </Link>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="company" className="text-sm">公司</Label>
-                  <Input
-                    id="company"
-                    name="company"
-                    defaultValue={profile?.company || ''}
-                    placeholder="请输入公司名称"
-                    maxLength={100}
-                  />
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="questions" className="pt-4 md:pt-5">
+            <div className="flex flex-col gap-4">
+              {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
+              {!questions?.length && (
+                <div className="text-center py-12 border rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">暂无提问</p>
+                  <Link href="/questions/new" className="text-sm text-primary hover:underline mt-1 inline-block">
+                    去提第一个问题
+                  </Link>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="city" className="text-sm">城市</Label>
-                  <Input
-                    id="city"
-                    name="city"
-                    defaultValue={profile?.city || ''}
-                    placeholder="请输入所在城市"
-                    maxLength={50}
-                  />
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="bookmarks" className="pt-4 md:pt-5">
+            <div className="flex flex-col gap-4">
+              {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
+                bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
+              )}
+              {!bookmarks?.length && (
+                <div className="text-center py-12 border rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">暂无收藏</p>
+                  <Link href="/posts" className="text-sm text-primary hover:underline mt-1 inline-block">
+                    去浏览面经
+                  </Link>
                 </div>
-                <Button type="submit" size="sm" className="w-full">保存修改</Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
