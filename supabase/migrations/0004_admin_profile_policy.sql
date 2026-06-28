@@ -1,16 +1,4 @@
--- 允许管理员管理所有用户资料（修改角色、状态等）
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies
-    WHERE schemaname = 'public'
-      AND tablename = 'profiles'
-      AND policyname = 'Admins can manage profiles'
-  ) THEN
-    CREATE POLICY "Admins can manage profiles" ON profiles
-      FOR ALL USING (
-        EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
-      );
-  END IF;
-END
-$$;
+-- 此文件已被 0005_fix_rls_recursion.sql 取代
+-- "Admins can manage profiles" 策略会导致 RLS 无限递归，已删除
+-- 管理员权限判断改用 is_admin() SECURITY DEFINER 函数
+-- 请执行 0005_fix_rls_recursion.sql 修复
