@@ -78,7 +78,7 @@ export default async function ProfilePage() {
   const initial = displayName.charAt(0).toUpperCase()
 
   return (
-    <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-7xl">
       {/* 页面标题 */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8">
         <div>
@@ -95,7 +95,7 @@ export default async function ProfilePage() {
 
       <div className="flex flex-col md:flex-row gap-6 md:items-start">
         {/* 左侧：标签 + 内容 */}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 max-w-full">
           <Tabs defaultValue="posts" className="w-full">
             <TabsList className="grid w-full grid-cols-3 h-11">
               <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
@@ -153,7 +153,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* 右侧：个人资料 + 编辑 */}
-        <div className="w-full md:w-[300px] lg:w-[340px] shrink-0 space-y-5">
+        <div className="w-full md:w-[260px] lg:w-[300px] shrink-0 space-y-5">
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-base">个人资料</CardTitle>
