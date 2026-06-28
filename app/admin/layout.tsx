@@ -29,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </div>
       <nav className="flex gap-2 mb-6 border-b pb-4 flex-wrap">
         <Link href="/admin/dashboard"><Button variant="ghost" size="sm">仪表盘</Button></Link>
+        <Link href="/admin/users"><Button variant="ghost" size="sm">用户管理</Button></Link>
         <Link href="/admin/invite-codes"><Button variant="ghost" size="sm">邀请码</Button></Link>
         <Link href="/admin/companies"><Button variant="ghost" size="sm">企业管理</Button></Link>
         <Link href="/admin/jobs"><Button variant="ghost" size="sm">岗位管理</Button></Link>
