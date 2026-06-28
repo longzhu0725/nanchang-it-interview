@@ -80,22 +80,22 @@ export default async function ProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">用户中心</h1>
-          <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
-        </div>
-        <form action="/auth/logout" method="post">
-          <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1.5">
-            <LogOut className="h-4 w-4" />
-            退出登录
-          </Button>
-        </form>
-      </div>
-
       <div className="flex flex-col md:flex-row gap-6 md:items-start">
-        {/* 左侧：内容标签 */}
+        {/* 左侧：标题 + 内容标签 */}
         <div className="min-w-0 flex-1 order-2 md:order-1">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6 md:mb-8">
+            <div>
+              <h1 className="text-2xl font-bold">用户中心</h1>
+              <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
+            </div>
+            <form action="/auth/logout" method="post">
+              <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1.5">
+                <LogOut className="h-4 w-4" />
+                退出登录
+              </Button>
+            </form>
+          </div>
+
           <Tabs defaultValue="posts" className="w-full">
             <TabsList className="grid w-full grid-cols-3 h-11">
               <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
