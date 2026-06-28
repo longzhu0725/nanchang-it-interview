@@ -4,7 +4,13 @@ import { Badge } from '@/components/ui/badge'
 import { Eye, ThumbsUp, Star } from 'lucide-react'
 import type { Post } from '@/types/database'
 
-export function PostCard({ post }: { post: Post & { companies?: { name: string } | null; jobs?: { title: string } | null } }) {
+export function PostCard({
+  post,
+  showAnonymous = true,
+}: {
+  post: Post & { companies?: { name: string } | null; jobs?: { title: string } | null }
+  showAnonymous?: boolean
+}) {
   return (
     <Link href={`/posts/${post.id}`} className="block h-full group">
       <Card className="h-full transition-shadow hover:shadow-md">
@@ -35,7 +41,7 @@ export function PostCard({ post }: { post: Post & { companies?: { name: string }
             )}
             <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />{post.views}</span>
             <span className="inline-flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{post.likes}</span>
-            {post.is_anonymous && (
+            {showAnonymous && post.is_anonymous && (
               <span className="text-muted-foreground/80">匿名</span>
             )}
           </div>

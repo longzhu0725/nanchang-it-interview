@@ -9,7 +9,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
-import { User as UserIcon, FileText, MessageCircle, Bookmark, LogOut, Pencil, Mail, Building2, MapPin, CalendarDays } from 'lucide-react'
+import {
+  User as UserIcon,
+  FileText,
+  MessageCircle,
+  Bookmark,
+  LogOut,
+  Pencil,
+  Building2,
+  MapPin,
+  CalendarDays,
+} from 'lucide-react'
 
 async function updateProfile(formData: FormData) {
   'use server'
@@ -65,9 +75,12 @@ export default async function ProfilePage() {
     .select('posts(*, companies(name))')
     .eq('user_id', user.id)
 
+  const displayName = profile?.nickname || profile?.email?.split('@')[0] || '用户'
+  const initial = displayName.charAt(0).toUpperCase()
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8">
         <div>
           <h1 className="text-2xl font-bold">用户中心</h1>
           <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
@@ -80,9 +93,9 @@ export default async function ProfilePage() {
         </form>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr,320px] lg:items-start">
+      <div className="flex flex-col md:flex-row gap-6 md:items-start">
         {/* 左侧：内容标签 */}
-        <div className="min-w-0 order-2 lg:order-1">
+        <div className="min-w-0 flex-1 order-2 md:order-1">
           <Tabs defaultValue="posts" className="w-full">
             <TabsList className="grid w-full grid-cols-3 h-11">
               <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
@@ -95,9 +108,9 @@ export default async function ProfilePage() {
                 <Bookmark className="h-4 w-4" />我的收藏
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="posts" className="pt-5">
+            <TabsContent value="posts" className="pt-4 md:pt-5">
               <div className="flex flex-col gap-4">
-                {posts?.map((post) => <PostCard key={post.id} post={post} />)}
+                {posts?.map((post) => <PostCard key={post.id} post={post} showAnonymous={false} />)}
                 {!posts?.length && (
                   <div className="text-center py-12 border rounded-lg bg-muted/30">
                     <p className="text-muted-foreground">暂无发布</p>
@@ -108,7 +121,7 @@ export default async function ProfilePage() {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="questions" className="pt-5">
+            <TabsContent value="questions" className="pt-4 md:pt-5">
               <div className="flex flex-col gap-4">
                 {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
                 {!questions?.length && (
@@ -121,7 +134,7 @@ export default async function ProfilePage() {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="bookmarks" className="pt-5">
+            <TabsContent value="bookmarks" className="pt-4 md:pt-5">
               <div className="flex flex-col gap-4">
                 {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
                   bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
@@ -140,7 +153,7 @@ export default async function ProfilePage() {
         </div>
 
         {/* 右侧：资料卡 */}
-        <div className="order-1 lg:order-2 space-y-6">
+        <div className="order-1 md:order-2 w-full md:w-[300px] lg:w-[340px] shrink-0 space-y-5">
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-base">
@@ -150,11 +163,11 @@ export default async function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xl">
-                  {(profile?.nickname || profile?.email || '?').charAt(0).toUpperCase()}
+                <div className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-semibold text-xl md:text-2xl shadow-sm">
+                  {initial}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-medium truncate">{profile?.nickname || '未设置昵称'}</p>
+                  <p className="font-semibold truncate text-base md:text-lg">{displayName}</p>
                   <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
                 </div>
               </div>
@@ -162,19 +175,15 @@ export default async function ProfilePage() {
               <div className="border-t" />
 
               <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="h-4 w-4 shrink-0" />
-                  <span className="break-all">{profile?.email}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2.5 text-muted-foreground">
                   <Building2 className="h-4 w-4 shrink-0" />
                   <span>{profile?.company || '未填写公司'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2.5 text-muted-foreground">
                   <MapPin className="h-4 w-4 shrink-0" />
                   <span>{profile?.city || '南昌'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="flex items-center gap-2.5 text-muted-foreground">
                   <CalendarDays className="h-4 w-4 shrink-0" />
                   <span>注册于 {new Date(profile?.created_at || Date.now()).toLocaleDateString('zh-CN')}</span>
                 </div>
