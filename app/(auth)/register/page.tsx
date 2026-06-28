@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
-import { Building2 } from 'lucide-react'
+import { Building2, ShieldCheck } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -27,7 +27,6 @@ export default function RegisterPage() {
         password: formData.get('password'),
         nickname: formData.get('nickname'),
         company: formData.get('company'),
-        inviteCode: formData.get('inviteCode'),
       }),
       headers: { 'Content-Type': 'application/json' },
     })
@@ -69,12 +68,10 @@ export default function RegisterPage() {
                 <Input id="nickname" name="nickname" required placeholder="你的显示名称" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company">所在公司 <span className="text-muted-foreground font-normal text-xs">(选填)</span></Label>
+                <Label htmlFor="company">
+                  所在公司 <span className="text-muted-foreground font-normal text-xs">(选填)</span>
+                </Label>
                 <Input id="company" name="company" placeholder="如：腾讯、华为、学生、待业、自由职业" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="inviteCode">邀请码</Label>
-                <Input id="inviteCode" name="inviteCode" required placeholder="请输入邀请码" />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={loading}>
@@ -83,6 +80,12 @@ export default function RegisterPage() {
             </form>
           </CardContent>
         </Card>
+
+        <div className="mt-6 flex items-start gap-2 rounded-lg border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
+          <p>已启用注册频率保护，同一 IP 5 分钟内最多尝试 5 次注册。</p>
+        </div>
+
         <p className="mt-6 text-center text-sm text-muted-foreground">
           已有账号？
           <Link href="/login" className="ml-1 font-medium text-foreground hover:underline">

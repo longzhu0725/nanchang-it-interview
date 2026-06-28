@@ -1,25 +1,43 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
+
+const REGISTER_LIMIT = {
+  windowMs: 5 * 60 * 1000, // 5 分钟
+  maxRequests: 5, // 每个 IP 最多 5 次注册尝试
+}
 
 export async function POST(request: Request) {
-  const { email, password, nickname, company, inviteCode } = await request.json()
+  const ip = getClientIp(request)
+  const limit = rateLimit(`register:${ip}`, REGISTER_LIMIT)
+
+  if (!limit.success) {
+    const retryAfter = Math.ceil((limit.resetAt - Date.now()) / 1000)
+    return NextResponse.json(
+      { error: `注册尝试过于频繁，请在 ${Math.ceil(retryAfter / 60)} 分钟后再试` },
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': String(REGISTER_LIMIT.maxRequests),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(Math.ceil(limit.resetAt / 1000)),
+          'Retry-After': String(retryAfter),
+        },
+      }
+    )
+  }
+
+  const { email, password, nickname, company } = await request.json()
+
+  if (!email || !password || !nickname) {
+    return NextResponse.json({ error: '邮箱、密码和昵称为必填项' }, { status: 400 })
+  }
+
+  if (password.length < 6) {
+    return NextResponse.json({ error: '密码至少 6 位' }, { status: 400 })
+  }
 
   const supabase = createAdminClient()
-
-  // 验证邀请码
-  const { data: inviteData, error: inviteError } = await supabase
-    .from('invite_codes')
-    .select('*')
-    .eq('code', inviteCode)
-    .single()
-
-  if (inviteError || !inviteData || inviteData.is_used) {
-    return NextResponse.json({ error: '邀请码无效或已被使用' }, { status: 400 })
-  }
-
-  if (inviteData.expires_at && new Date(inviteData.expires_at) < new Date()) {
-    return NextResponse.json({ error: '邀请码已过期' }, { status: 400 })
-  }
 
   // 创建用户
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -39,18 +57,12 @@ export async function POST(request: Request) {
     nickname,
     company,
     city: '南昌',
-    invite_code_id: inviteData.id,
+    invite_code_id: null,
   })
 
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 400 })
   }
-
-  // 标记邀请码已使用
-  await supabase
-    .from('invite_codes')
-    .update({ is_used: true, used_by: authData.user.id })
-    .eq('id', inviteData.id)
 
   return NextResponse.json({ success: true })
 }

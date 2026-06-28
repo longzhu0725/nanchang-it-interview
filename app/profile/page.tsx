@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
-import { User as UserIcon, FileText, MessageCircle, Bookmark, LogOut, Pencil } from 'lucide-react'
+import { User as UserIcon, FileText, MessageCircle, Bookmark, LogOut, Pencil, Mail, Building2, MapPin, CalendarDays } from 'lucide-react'
 
 async function updateProfile(formData: FormData) {
   'use server'
@@ -66,107 +66,167 @@ export default async function ProfilePage() {
     .eq('user_id', user.id)
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">用户中心</h1>
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">用户中心</h1>
+          <p className="text-sm text-muted-foreground mt-1">管理你的资料和发布内容</p>
+        </div>
         <form action="/auth/logout" method="post">
-          <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1">
+          <Button type="submit" variant="outline" size="sm" className="flex items-center gap-1.5">
             <LogOut className="h-4 w-4" />
             退出登录
           </Button>
         </form>
       </div>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserIcon className="h-5 w-5" />个人资料
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p><span className="text-muted-foreground">昵称：</span>{profile?.nickname || '未设置'}</p>
-          <p><span className="text-muted-foreground">邮箱：</span>{profile?.email}</p>
-          <p><span className="text-muted-foreground">公司：</span>{profile?.company || '未填写'}</p>
-          <p><span className="text-muted-foreground">城市：</span>{profile?.city || '南昌'}</p>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-[1fr,320px] lg:items-start">
+        {/* 左侧：内容标签 */}
+        <div className="min-w-0 order-2 lg:order-1">
+          <Tabs defaultValue="posts" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 h-11">
+              <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
+                <FileText className="h-4 w-4" />我的发布
+              </TabsTrigger>
+              <TabsTrigger value="questions" className="flex items-center gap-1.5 text-sm">
+                <MessageCircle className="h-4 w-4" />我的提问
+              </TabsTrigger>
+              <TabsTrigger value="bookmarks" className="flex items-center gap-1.5 text-sm">
+                <Bookmark className="h-4 w-4" />我的收藏
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="posts" className="pt-5">
+              <div className="flex flex-col gap-4">
+                {posts?.map((post) => <PostCard key={post.id} post={post} />)}
+                {!posts?.length && (
+                  <div className="text-center py-12 border rounded-lg bg-muted/30">
+                    <p className="text-muted-foreground">暂无发布</p>
+                    <Link href="/posts/new" className="text-sm text-primary hover:underline mt-1 inline-block">
+                      去发布第一篇面经
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            <TabsContent value="questions" className="pt-5">
+              <div className="flex flex-col gap-4">
+                {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
+                {!questions?.length && (
+                  <div className="text-center py-12 border rounded-lg bg-muted/30">
+                    <p className="text-muted-foreground">暂无提问</p>
+                    <Link href="/questions/new" className="text-sm text-primary hover:underline mt-1 inline-block">
+                      去提第一个问题
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            <TabsContent value="bookmarks" className="pt-5">
+              <div className="flex flex-col gap-4">
+                {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
+                  bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
+                )}
+                {!bookmarks?.length && (
+                  <div className="text-center py-12 border rounded-lg bg-muted/30">
+                    <p className="text-muted-foreground">暂无收藏</p>
+                    <Link href="/posts" className="text-sm text-primary hover:underline mt-1 inline-block">
+                      去浏览面经
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Pencil className="h-5 w-5" />编辑资料
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form action={updateProfile} className="space-y-4 max-w-md">
-            <div className="space-y-2">
-              <Label htmlFor="nickname">昵称</Label>
-              <Input
-                id="nickname"
-                name="nickname"
-                defaultValue={profile?.nickname || ''}
-                placeholder="请输入昵称"
-                maxLength={50}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">公司</Label>
-              <Input
-                id="company"
-                name="company"
-                defaultValue={profile?.company || ''}
-                placeholder="请输入公司名称"
-                maxLength={100}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="city">城市</Label>
-              <Input
-                id="city"
-                name="city"
-                defaultValue={profile?.city || ''}
-                placeholder="请输入所在城市"
-                maxLength={50}
-              />
-            </div>
-            <Button type="submit">保存修改</Button>
-          </form>
-        </CardContent>
-      </Card>
+        {/* 右侧：资料卡 */}
+        <div className="order-1 lg:order-2 space-y-6">
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <UserIcon className="h-5 w-5 text-primary" />
+                个人资料
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xl">
+                  {(profile?.nickname || profile?.email || '?').charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{profile?.nickname || '未设置昵称'}</p>
+                  <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
+                </div>
+              </div>
 
-      <Tabs defaultValue="posts">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="posts" className="flex items-center gap-1">
-            <FileText className="h-4 w-4" />我的发布
-          </TabsTrigger>
-          <TabsTrigger value="questions" className="flex items-center gap-1">
-            <MessageCircle className="h-4 w-4" />我的提问
-          </TabsTrigger>
-          <TabsTrigger value="bookmarks" className="flex items-center gap-1">
-            <Bookmark className="h-4 w-4" />我的收藏
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="posts" className="pt-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {posts?.map((post) => <PostCard key={post.id} post={post} />)}
-            {!posts?.length && <p className="text-muted-foreground col-span-2 text-center py-8">暂无发布</p>}
-          </div>
-        </TabsContent>
-        <TabsContent value="questions" className="pt-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
-            {!questions?.length && <p className="text-muted-foreground col-span-2 text-center py-8">暂无提问</p>}
-          </div>
-        </TabsContent>
-        <TabsContent value="bookmarks" className="pt-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
-              bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
-            )}
-            {!bookmarks?.length && <p className="text-muted-foreground col-span-2 text-center py-8">暂无收藏</p>}
-          </div>
-        </TabsContent>
-      </Tabs>
+              <div className="border-t" />
+
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Mail className="h-4 w-4 shrink-0" />
+                  <span className="break-all">{profile?.email}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="h-4 w-4 shrink-0" />
+                  <span>{profile?.company || '未填写公司'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="h-4 w-4 shrink-0" />
+                  <span>{profile?.city || '南昌'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <CalendarDays className="h-4 w-4 shrink-0" />
+                  <span>注册于 {new Date(profile?.created_at || Date.now()).toLocaleDateString('zh-CN')}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Pencil className="h-5 w-5 text-primary" />
+                编辑资料
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form action={updateProfile} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nickname" className="text-sm">昵称</Label>
+                  <Input
+                    id="nickname"
+                    name="nickname"
+                    defaultValue={profile?.nickname || ''}
+                    placeholder="请输入昵称"
+                    maxLength={50}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-sm">公司</Label>
+                  <Input
+                    id="company"
+                    name="company"
+                    defaultValue={profile?.company || ''}
+                    placeholder="请输入公司名称"
+                    maxLength={100}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city" className="text-sm">城市</Label>
+                  <Input
+                    id="city"
+                    name="city"
+                    defaultValue={profile?.city || ''}
+                    placeholder="请输入所在城市"
+                    maxLength={50}
+                  />
+                </div>
+                <Button type="submit" size="sm" className="w-full">保存修改</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }
