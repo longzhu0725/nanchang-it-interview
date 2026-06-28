@@ -178,7 +178,7 @@ export default async function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 shrink-0" />
-                  <span>{profile?.city || '南昌'}</span>
+                  <span>{profile?.city || '未填写城市'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 shrink-0" />

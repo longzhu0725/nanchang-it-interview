@@ -27,7 +27,7 @@ async function createCompany(formData: FormData) {
     size,
     description,
     tags,
-    city: city || '南昌',
+    city: city || null,
     status: 'published',
     created_by: user?.id,
   })
@@ -75,7 +75,7 @@ export default async function AdminCompaniesPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="city">城市</Label>
-                <Input id="city" name="city" defaultValue="南昌" placeholder="请输入城市" />
+                <Input id="city" name="city" placeholder="请输入城市，如：南昌" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="industry">行业</Label>

@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     email,
     nickname,
     company,
-    city: '南昌',
+    city: null,
     invite_code_id: null,
   })
 
