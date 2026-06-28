@@ -78,7 +78,7 @@ export default async function ProfilePage() {
   const initial = displayName.charAt(0).toUpperCase()
 
   return (
-    <div className="container mx-auto px-4 py-6 md:py-8 max-w-7xl">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-8">
       {/* 页面标题 */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8">
         <div>
@@ -93,22 +93,26 @@ export default async function ProfilePage() {
         </form>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 md:items-start">
-        {/* 左侧：标签 + 内容 */}
-        <div className="min-w-0 flex-1 max-w-full">
-          <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 h-11">
-              <TabsTrigger value="posts" className="flex items-center gap-1.5 text-sm">
-                <FileText className="h-4 w-4" />我的发布
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+        {/* 左侧主区域：标签 + 内容 */}
+        <div className="w-full min-w-0">
+          <Tabs defaultValue="posts">
+            <TabsList className="grid grid-cols-3">
+              <TabsTrigger value="posts" className="gap-1.5">
+                <FileText className="h-4 w-4" />
+                <span>我的发布</span>
               </TabsTrigger>
-              <TabsTrigger value="questions" className="flex items-center gap-1.5 text-sm">
-                <MessageCircle className="h-4 w-4" />我的提问
+              <TabsTrigger value="questions" className="gap-1.5">
+                <MessageCircle className="h-4 w-4" />
+                <span>我的提问</span>
               </TabsTrigger>
-              <TabsTrigger value="bookmarks" className="flex items-center gap-1.5 text-sm">
-                <Bookmark className="h-4 w-4" />我的收藏
+              <TabsTrigger value="bookmarks" className="gap-1.5">
+                <Bookmark className="h-4 w-4" />
+                <span>我的收藏</span>
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="posts" className="pt-4 md:pt-5">
+
+            <TabsContent value="posts" className="mt-5">
               <div className="flex flex-col gap-4">
                 {posts?.map((post) => <PostCard key={post.id} post={post} showAnonymous={false} />)}
                 {!posts?.length && (
@@ -121,7 +125,7 @@ export default async function ProfilePage() {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="questions" className="pt-4 md:pt-5">
+            <TabsContent value="questions" className="mt-5">
               <div className="flex flex-col gap-4">
                 {questions?.map((question) => <QuestionCard key={question.id} question={question} />)}
                 {!questions?.length && (
@@ -134,7 +138,7 @@ export default async function ProfilePage() {
                 )}
               </div>
             </TabsContent>
-            <TabsContent value="bookmarks" className="pt-4 md:pt-5">
+            <TabsContent value="bookmarks" className="mt-5">
               <div className="flex flex-col gap-4">
                 {(bookmarks as unknown as Array<{ posts: (Post & { companies?: { name: string } | null }) | null }>)?.map((bookmark) =>
                   bookmark.posts && <PostCard key={bookmark.posts.id} post={bookmark.posts} />
@@ -152,8 +156,8 @@ export default async function ProfilePage() {
           </Tabs>
         </div>
 
-        {/* 右侧：个人资料 + 编辑 */}
-        <div className="w-full md:w-[260px] lg:w-[300px] shrink-0 space-y-5">
+        {/* 右侧边栏：个人资料 + 编辑 */}
+        <div className="w-full flex flex-col gap-5 lg:sticky lg:top-24">
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-base">个人资料</CardTitle>
@@ -163,7 +167,7 @@ export default async function ProfilePage() {
                 <div className="h-14 w-14 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-semibold text-xl md:text-2xl shadow-sm shrink-0">
                   {initial}
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-semibold text-base md:text-lg truncate">{displayName}</p>
                   <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
                 </div>
@@ -174,7 +178,7 @@ export default async function ProfilePage() {
               <div className="space-y-2.5 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Building2 className="h-4 w-4 shrink-0" />
-                  <span>{profile?.company || '未填写公司'}</span>
+                  <span className="truncate">{profile?.company || '未填写公司'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 shrink-0" />
