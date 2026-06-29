@@ -71,5 +71,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: profileError.message }, { status: 400 })
   }
 
-  return NextResponse.json({ success: true })
+  // 发送邮箱确认邮件
+  const { error: resendError } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+  })
+
+  if (resendError) {
+    // 邮件发送失败不阻断注册流程，但记录日志
+    console.error('发送确认邮件失败:', resendError)
+  }
+
+  return NextResponse.json({ success: true, email })
 }

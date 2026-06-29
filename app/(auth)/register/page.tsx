@@ -20,10 +20,11 @@ export default function RegisterPage() {
     setError('')
 
     const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({
-        email: formData.get('email'),
+        email,
         password: formData.get('password'),
         nickname: formData.get('nickname'),
         company: formData.get('company'),
@@ -39,7 +40,8 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/login?registered=1')
+    // 注册成功后跳转到邮箱验证提示页
+    router.push(`/verify?email=${encodeURIComponent(data.email || email)}`)
   }
 
   return (
