@@ -18,6 +18,8 @@ import {
   Building2,
   MapPin,
   CalendarDays,
+  Lock,
+  Mail,
 } from 'lucide-react'
 
 async function updateProfile(formData: FormData) {
@@ -156,7 +158,7 @@ export default async function ProfilePage() {
           </Tabs>
         </div>
 
-        {/* 右侧边栏：个人资料 + 编辑 */}
+        {/* 右侧边栏：个人资料 + 编辑 + 安全设置 */}
         <div className="w-full flex flex-col gap-5 lg:sticky lg:top-24">
           <Card>
             <CardHeader className="pb-4">
@@ -233,6 +235,29 @@ export default async function ProfilePage() {
                 </div>
                 <Button type="submit" size="sm" className="w-full">保存修改</Button>
               </form>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Lock className="h-5 w-5 text-primary" />
+                账号安全
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link href="/profile/password" className="block">
+                <Button variant="outline" size="sm" className="w-full flex items-center justify-start gap-2">
+                  <Lock className="h-4 w-4" />
+                  修改密码
+                </Button>
+              </Link>
+              <Link href="/profile/email" className="block">
+                <Button variant="outline" size="sm" className="w-full flex items-center justify-start gap-2">
+                  <Mail className="h-4 w-4" />
+                  修改邮箱
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
