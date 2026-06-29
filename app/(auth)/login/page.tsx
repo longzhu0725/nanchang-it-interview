@@ -64,7 +64,12 @@ export default function LoginPage() {
                 <Input id="email" name="email" type="email" placeholder="you@example.com" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">密码</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">密码</Label>
+                  <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">
+                    忘记密码？
+                  </Link>
+                </div>
                 <Input id="password" name="password" type="password" required />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
